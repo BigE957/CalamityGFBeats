@@ -18,8 +18,6 @@ public class BloodMoonDynamicMusic : LayeredDynamicMusic
 
     protected override int GetDesiredLayerIndex() => NPC.AnyNPCs(NPCID.BloodNautilus) ? 1 : 0;
 
-    protected override string GetMusicAssetPath() => "Assets/Music/TenebreRossoSangueCalm";
-
     protected override string[] GetLayerPaths() =>
     [
         "Assets/Music/TenebreRossoSangueCalm.ogg",

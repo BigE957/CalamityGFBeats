@@ -168,14 +168,6 @@ public class LayeredOGGTrack : ASoundEffectBasedAudioTrack
         }
     }
 
-    public new void Play()
-    {
-        // Pre‑buffer several chunks to avoid startup underrun
-        for (int i = 0; i < 8; i++)
-            ReadAheadPutAChunkIntoTheBuffer();
-        base.Play();
-    }
-
     protected override void ReadAheadPutAChunkIntoTheBuffer()
     {
         lock (_lock)

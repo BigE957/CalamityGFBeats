@@ -47,9 +47,10 @@ public abstract class LayeredDynamicMusic : ModSystem
 
     /// <summary>
     /// Override to provide the music asset path (without extension) for the slot.
-    /// This is used to get a music slot ID; it can be the same as the first layer's path without .ogg.
+    /// This is used to get a music slot ID
+    /// By default, this will be the same as the first layer's path without .ogg.
     /// </summary>
-    protected abstract string GetMusicAssetPath();
+    protected virtual string GetMusicAssetPath() => "";
 
     /// <summary>
     /// Called when starting a transition to a new layer.
@@ -78,15 +79,15 @@ public abstract class LayeredDynamicMusic : ModSystem
         // Create layered track with all layers
         LayeredTrack = new LayeredOGGTrack(layerBytes);
 
-        // Pre‑fill buffer to avoid startup glitch
-        for (int i = 0; i < 20; i++)
-            LayeredTrack.Update();
-
         // Set initial layer to full volume, others silent
         for (int i = 0; i < layerPaths.Length; i++)
             LayeredTrack.SetLayerVolume(i, i == _currentLayerIndex ? 1f : 0f);
 
-        MusicSlot = MusicLoader.GetMusicSlot(CalamityGFBeats.Instance, GetMusicAssetPath());
+        string path = GetMusicAssetPath();
+        if (path == "")
+            path = layerPaths[0].Remove(layerPaths[0].Length - 4);
+        MusicSlot = MusicLoader.GetMusicSlot(CalamityGFBeats.Instance, path);
+
         if (Main.audioSystem is LegacyAudioSystem audioSystem)
         {
             audioSystem.AudioTracks[MusicSlot]?.Dispose();
