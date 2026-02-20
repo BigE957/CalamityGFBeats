@@ -94,10 +94,10 @@ public abstract class LayeredDynamicMusic : ModSystem
             audioSystem.AudioTracks[MusicSlot] = LayeredTrack;
         }
 
-        OnModLoadFinished();
+        PostMusicLoad();
     }
 
-    protected virtual void OnModLoadFinished() { }
+    protected virtual void PostMusicLoad() { }
 
     private void StartTransition(int newLayerIndex)
     {
