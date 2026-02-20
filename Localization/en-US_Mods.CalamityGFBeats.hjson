@@ -1,0 +1,44 @@
+ModCompat: {
+	MusicDisplay: {
+		ModName: Calamity: GFBeats
+
+		DesertScourge: {
+			DisplayName: Outlaw of the Cattle Thieves
+			Author: by jteoh
+		}
+
+		GiantClam: {
+			DisplayName: Sentinel of the Sanctum
+			Author: by jteoh
+		}
+	}
+}
+
+Configs: {
+	SundownerConfig: {
+		DisplayName: Config
+		Headers.SongOverrides: Song Overriding
+
+		OverrideBrimstoneElemental: {
+		}
+	}
+
+	CalamityGFBeatsConfig: {
+		DisplayName: Calamity GFBeats Config
+
+		Headers: {
+			SongOverrides: Song Overrides Header
+			SongAdditions: Song Additions Header
+		}
+
+		OverrideDesertScourge: {
+			Label: "[i:Sand] Override 'Guardian of the Former Seas'"
+			Tooltip: Replaces 'Guardian of the Former Seas' By DM Dokuro with 'Outlaw of the Cattle Thieves' By jteoh during the Desert Scourge fight.
+		}
+
+		AddGiantClam: {
+			Label: "[i:WhitePearl] Play 'Sentinel of the Sanctum'"
+			Tooltip: Plays 'Sentinel of the Sanctum' By jteoh during the Giant Clam fight.
+		}
+	}
+}

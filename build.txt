@@ -1,0 +1,5 @@
+displayName = Calamity: GFB Music
+author = jteoh and BigE
+version = 1.0
+modReferences = CalamityMod
+dllReferences = NVorbis
