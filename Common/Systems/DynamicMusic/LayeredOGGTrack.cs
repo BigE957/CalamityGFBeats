@@ -27,8 +27,8 @@ public class LayeredOGGTrack : ASoundEffectBasedAudioTrack
     private bool _skipNextReuse = false;
 
     private readonly List<IAudioEffect> _effects = [];
-    private int _sampleRate;
-    private int _channels;
+    private readonly int _sampleRate;
+    private readonly int _channels;
     private long _totalSamples;                  // total interleaved samples of the track
 
     // Speed control
@@ -42,7 +42,7 @@ public class LayeredOGGTrack : ASoundEffectBasedAudioTrack
 
     // Reverse control
     private bool _isReversing = false;
-    private float _reversePos;                    // current reverse read position in frames (0 = oldest)
+    private float _reversePos;
 
     public bool Reverse
     {
@@ -63,22 +63,19 @@ public class LayeredOGGTrack : ASoundEffectBasedAudioTrack
     }
 
     // History buffer for reverse mode (30 seconds)
-    private float[] _historyBuffer;
+    private readonly float[] _historyBuffer;
     private int _historyWritePos = 0;              // next write position in samples
     private int _historyLengthSamples = 0;          // total valid samples in history
     private int _historyFrames = 0;                  // total valid frames in history
 
     // Ring buffer for forward resampling
-    private float[] _ringBuffer;                  // circular buffer of interleaved samples
-    private int _ringBufferSize;                   // total samples in ring buffer
+    private readonly float[] _ringBuffer;                  // circular buffer of interleaved samples
+    private readonly int _ringBufferSize;                   // total samples in ring buffer
     private int _ringReadPos = 0;                   // index of oldest valid sample
     private int _ringWritePos = 0;                  // next write position
     private int _ringAvailableFrames = 0;           // number of valid frames in ring
     private float _phase = 0f;                        // current read position in frames (for forward)
     private const int RingBufferSeconds = 2;          // buffer size in seconds
-
-    // For reverse seeking (kept from previous implementation, but not used in forward)
-    private float _sourceSamplePos = 0f;           // virtual position in samples (for reverse seeking – not used now)
 
     public LayeredOGGTrack(params byte[][] layerBytes)
     {
@@ -129,7 +126,6 @@ public class LayeredOGGTrack : ASoundEffectBasedAudioTrack
         _ringWritePos = 0;
         _ringAvailableFrames = 0;
         _phase = 0f;
-        _sourceSamplePos = 0f;
         _reversePos = 0;
     }
 
@@ -203,9 +199,6 @@ public class LayeredOGGTrack : ASoundEffectBasedAudioTrack
             _ringAvailableFrames = 0;
             _phase = 0f;
 
-            // Update virtual source position for reverse (if needed)
-            _sourceSamplePos = (float)(position.TotalSeconds * _sampleRate * _channels);
-
             // Reset reverse position (history will be rebuilt)
             _historyWritePos = 0;
             _historyLengthSamples = 0;
@@ -216,6 +209,40 @@ public class LayeredOGGTrack : ASoundEffectBasedAudioTrack
                 effect.Reset();
         }
     }
+    #endregion
+
+    #region Track Info
+
+    public TimeSpan GetTimePosition()
+    {
+        TimeSpan time = TimeSpan.Zero;
+        bool allSame = true;
+        foreach (Layer layer in _layers)
+        {
+            if (time == TimeSpan.Zero)
+                time = layer.Reader.TimePosition;
+            else if (time != layer.Reader.TimePosition)
+            {
+                allSame = false;
+                break;
+            }
+        }
+
+        if (!allSame)
+        {
+            float highestVolume = -1f;
+            foreach (Layer layer in _layers)
+            {
+                if(layer.Volume > highestVolume)
+                    time = layer.Reader.TimePosition;
+            }
+        }
+
+        return time;
+    }
+
+    public TimeSpan GetTimePosition(int layer) => _layers[layer].Reader.TimePosition;
+
     #endregion
 
     public void SkipNextReuse()
@@ -245,7 +272,6 @@ public class LayeredOGGTrack : ASoundEffectBasedAudioTrack
 
             _totalSamples = (long)(_layers[0].Reader.TotalTime.TotalSeconds * _sampleRate * _channels);
 
-            _sourceSamplePos = 0f;
             _ringReadPos = 0;
             _ringWritePos = 0;
             _ringAvailableFrames = 0;
@@ -493,9 +519,6 @@ public class LayeredOGGTrack : ASoundEffectBasedAudioTrack
         TimeSpan time = TimeSpan.FromSeconds((double)samplePos / (_sampleRate * _channels));
         SeekAll(time);
     }
-
-    // Kept for compatibility (not used in forward path)
-    private float[] ApplySpeedEffect(float[] input, int inputSamples, int outputSamples) => input;
 
     public override void Dispose()
     {
