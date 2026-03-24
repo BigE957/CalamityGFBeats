@@ -28,4 +28,8 @@ public class CalamityGFBeatsConfig : ModConfig
     [BackgroundColor(58, 83, 145, 192)]
     [DefaultValue(true)]
     public bool AddGiantClam { get; set; }
+
+    [BackgroundColor(39, 151, 242, 192)]
+    [DefaultValue(true)]
+    public bool OverrideCrabulon { get; set; }
 }

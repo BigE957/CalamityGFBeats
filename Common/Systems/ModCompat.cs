@@ -38,5 +38,6 @@ public class ModCompat : ModSystem
 
         AddMusicWithCondition("Assets/Music/DesertScourge", "DesertScourge", () => NPC.AnyNPCs(ModContent.NPCType<DesertScourgeHead>()) && SongEndingManager.CurrentBossEnding == SongEndingManager.BossesWithEnds.None);
         AddMusicWithCondition("Assets/Music/GiantClam", "GiantClam", () => NPC.AnyNPCs(ModContent.NPCType<GiantClam>()) && SongEndingManager.CurrentBossEnding == SongEndingManager.BossesWithEnds.None);
+        AddMusic("Assets/Music/Crabulon", "Crabulon");
     }
 }
