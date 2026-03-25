@@ -8,7 +8,7 @@ namespace CalamityGFBeats.Content.MusicScenes;
 
 public class CrabulonMusicScene : ModSceneEffect
 {
-    public override int Music => MusicLoader.GetMusicSlot(CalamityGFBeats.Instance, "Assets/Music/Crabulon");
+    public override int Music => MusicLoader.GetMusicSlot(CalamityGFBeats.Instance, "Assets/Music/CrabulonDisco");
     public override bool IsSceneEffectActive(Player player)
     {
         if (!CalamityGFBeatsConfig.Instance.OverrideCrabulon || BossRushEvent.BossRushActive)
